@@ -1,0 +1,124 @@
+Escribir en activity_main.xml:
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    tools:context="net.jc_mouse.myapplication.MainActivity">
+
+    <TextView
+        android:id="@+id/textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/str_textview" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/str_button"/>
+
+</LinearLayout>
+
+
+Escribir en la carpeta res/values/strings.xml:
+
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="str_textview">Hello World!!!</string>
+    <string name="str_button">Change Language</string>
+
+    <string name="str_en" >English</string>
+    <string name="str_es" >Spanish</string>
+    <string-array name="languages" >
+    <item>@string/str_en</item>
+    <item>@string/str_es</item>
+    </string-array>
+</resources>
+
+Escribir en MainActivity.java:
+
+package net.jc_mouse.myapplication;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    private Button button;
+    private TextView textview;
+    private Locale locale;
+    private Configuration config = new Configuration();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        button = ((Button)findViewById(R.id.button));
+        textview = ((TextView)findViewById(R.id.textview));
+
+        button.setOnClickListener(
+                new View.OnClickListener() {
+                    public void onClick(View view) {
+                        showDialog();
+                    }});
+    }
+
+    /**
+     * Muestra una ventana de dialogo para elegir el nuevo idioma de la aplicacion
+     * Cuando se hace clic en uno de los idiomas, se cambia el idioma de la aplicacion
+     * y se recarga la actividad para ver los cambios
+     * */
+    private void showDialog(){
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
+        b.setTitle(getResources().getString(R.string.str_button));
+        //obtiene los idiomas del array de string.xml
+        String[] types = getResources().getStringArray(R.array.languages);
+        b.setItems(types, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+                switch(which){
+                    case 0:
+                        locale = new Locale("en");
+                        config.locale =locale;
+                        break;
+                    case 1:
+                        locale = new Locale("es");
+                        config.locale =locale;
+                        break;
+
+                }
+                getResources().updateConfiguration(config, null);
+                Intent refresh = new Intent(MainActivity.this, MainActivity.class);
+                startActivity(refresh);
+                finish();
+            }
+
+        });
+
+        b.show();
+    }
+
+}
+
+INTRODUCIR LOS IDIOMAS Y EDITAR LOS TEXTOS EN "TRANSLATIONS EDITOR".
+
